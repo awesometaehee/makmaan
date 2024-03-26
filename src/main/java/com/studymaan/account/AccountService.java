@@ -55,7 +55,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    private void sendSignUpConfirmEmail(Account newAccount) {
+    public void sendSignUpConfirmEmail(Account newAccount) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(newAccount.getEmail());
         mailMessage.setSubject("스터디올레 회원 가입 인증");
@@ -77,7 +77,7 @@ public class AccountService {
 
     public void login(Account account, HttpServletRequest request, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                account.getNickname(),
+                new UserAccount(account),
                 account.getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();

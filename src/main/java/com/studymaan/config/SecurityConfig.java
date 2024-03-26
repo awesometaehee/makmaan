@@ -26,6 +26,7 @@ public class SecurityConfig {
         // static 한 리소스들은 security 필터를 적용하지 마라
         return web -> web
                 .ignoring()
+                .requestMatchers("/node_modules/**")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -34,7 +35,7 @@ public class SecurityConfig {
         http
                 // 특정 요청들은 Security 체크하지 않도록 설정
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/", "/login", "/sign-up", "/check-email", "/check-email-token"
+                        .requestMatchers("/", "/login", "/sign-up", "/check-email-token"
                         , "/email-login", "/check-email-login", "/login-link", "/profile/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/profile/*").permitAll()
                         .anyRequest().authenticated());

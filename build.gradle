@@ -6,6 +6,8 @@ plugins {
 }
 
 frontend {
+	nodeInstallDirectory = file("${projectDir}/node")
+	packageJsonDirectory = projectDir
 	nodeVersion = "20.10.0"
 	cleanScript = "run clean"
 	assembleScript = "run build"
