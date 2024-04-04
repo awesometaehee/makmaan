@@ -1,5 +1,7 @@
 package com.studymaan.config;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.NameTokenizers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,5 +29,15 @@ public class AppConfig {
     @Bean
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
+    }
+
+    // 반복되는 object 간 변환을 줄일 때 사용
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setSourceNameTokenizer(NameTokenizers.UNDERSCORE)
+                .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE);
+        return modelMapper;
     }
 }

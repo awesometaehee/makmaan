@@ -1,9 +1,12 @@
 package com.studymaan.account;
 
+import com.studymaan.Settings.Notifications;
+import com.studymaan.Settings.Profile;
 import com.studymaan.domain.Account;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,6 +39,8 @@ public class AccountService implements UserDetailsService {
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy;
     private final SecurityContextRepository securityContextRepository;
+
+    private final ModelMapper modelMapper;
 
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveNewAccount(signUpForm);
@@ -98,5 +103,32 @@ public class AccountService implements UserDetailsService {
     public void completeSignUp(Account account, HttpServletRequest request, HttpServletResponse response) {
         account.completeSignUp();
         login(account, request, response);
+    }
+
+    public void updateProfile(Account account, Profile profile) {
+        /* modelMapper 사용 시 아래와 같이 사용 가능
+        account.setBio(profile.getBio());
+        account.setLocation(profile.getLocation());
+        account.setOccupation(profile.getOccupation());
+        account.setUrl(profile.getUrl());
+        account.setProfileImage(profile.getProfileImage());
+        */
+        modelMapper.map(profile, account); // 프로필에 있는 데이터를 어카운트로(에) 변환, 프로퍼티들이 매핑이 된다는 가정하에 사용
+        accountRepository.save(account);
+    }
+
+    public void updatePassword(Account account, String newPassword) {
+        account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
+
+    public void updateNotifications(Account account, Notifications notifications) {
+        account.setStudyCreatedByWeb(notifications.isStudyCreatedByWeb());
+        account.setStudyCreatedByEmail(notifications.isStudyCreatedByEmail());
+        account.setStudyUpdatedByWeb(notifications.isStudyUpdatedByWeb());
+        account.setStudyUpdatedByEmail(notifications.isStudyUpdatedByEmail());
+        account.setStudyEnrollmentResultByEmail(notifications.isStudyEnrollmentResultByEmail());
+        account.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
+        accountRepository.save(account);
     }
 }
