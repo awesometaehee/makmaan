@@ -1,6 +1,5 @@
 package com.studymaan.settings;
 
-import com.studymaan.Settings.SettingsController;
 import com.studymaan.WithAccount;
 import com.studymaan.account.AccountRepository;
 import com.studymaan.domain.Account;

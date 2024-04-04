@@ -67,6 +67,7 @@ public class Account {
     }
 
     public boolean canSendConfirmEmail() {
+        // 현 시간 부로 힌시간 전 time return
         return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 }

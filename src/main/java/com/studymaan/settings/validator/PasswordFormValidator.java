@@ -1,6 +1,6 @@
-package com.studymaan.Settings;
+package com.studymaan.settings.validator;
 
-import org.springframework.security.core.parameters.P;
+import com.studymaan.settings.form.PasswordForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

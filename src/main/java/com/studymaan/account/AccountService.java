@@ -1,32 +1,28 @@
 package com.studymaan.account;
 
-import com.studymaan.Settings.Notifications;
-import com.studymaan.Settings.Profile;
+import com.studymaan.settings.form.NicknameForm;
+import com.studymaan.settings.form.Notifications;
+import com.studymaan.settings.form.Profile;
 import com.studymaan.domain.Account;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @Transactional
@@ -123,12 +119,32 @@ public class AccountService implements UserDetailsService {
     }
 
     public void updateNotifications(Account account, Notifications notifications) {
+        /*
         account.setStudyCreatedByWeb(notifications.isStudyCreatedByWeb());
         account.setStudyCreatedByEmail(notifications.isStudyCreatedByEmail());
         account.setStudyUpdatedByWeb(notifications.isStudyUpdatedByWeb());
         account.setStudyUpdatedByEmail(notifications.isStudyUpdatedByEmail());
         account.setStudyEnrollmentResultByEmail(notifications.isStudyEnrollmentResultByEmail());
         account.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
+        */
+        modelMapper.map(notifications, account);
         accountRepository.save(account);
+    }
+
+    public void updateAccount(Account account, NicknameForm nicknameForm, HttpServletRequest request, HttpServletResponse response) {
+        account.setNickname(nicknameForm.getNickname());
+        accountRepository.save(account);
+        login(account, request, response);
+    }
+
+    public void sendLoginLink(Account account) {
+        account.generateEmailCheckToken();
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(account.getEmail());
+        mailMessage.setSubject("스터디올래, 로그인 링크");
+        mailMessage.setText("/login-by-email?token=" + account.getEmailCheckToken() +
+                "&email=" + account.getEmail());
+
+        javaMailSender.send(mailMessage);
     }
 }

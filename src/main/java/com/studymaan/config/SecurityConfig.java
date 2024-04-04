@@ -44,8 +44,8 @@ public class SecurityConfig {
         http
                 // 특정 요청들은 Security 체크하지 않도록 설정
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/", "/login", "/sign-up", "/check-email-token"
-                        , "/email-login", "/check-email-login", "/login-link", "/profile/*").permitAll()
+                        .requestMatchers("/", "/login", "/sign-up", "/check-email-token",
+                                "/email-login", "/login-by-email").permitAll()
                         .requestMatchers(HttpMethod.GET, "/profile/*").permitAll()
                         .anyRequest().authenticated());
 

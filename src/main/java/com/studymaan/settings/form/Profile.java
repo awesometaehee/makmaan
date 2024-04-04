@@ -1,8 +1,6 @@
-package com.studymaan.Settings;
+package com.studymaan.settings.form;
 
-import com.studymaan.domain.Account;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Data
