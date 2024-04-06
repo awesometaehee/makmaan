@@ -1,5 +1,6 @@
 package com.studymaan.account;
 
+import com.studymaan.domain.Tag;
 import com.studymaan.settings.form.NicknameForm;
 import com.studymaan.settings.form.Notifications;
 import com.studymaan.settings.form.Profile;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -146,5 +149,18 @@ public class AccountService implements UserDetailsService {
                 "&email=" + account.getEmail());
 
         javaMailSender.send(mailMessage);
+    }
+
+    public void addTag(Account account, Tag tag) {
+        // Optional<T> : null이 올 수 있는 값을 감싸는 wrapper class
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        // ifPresent : void, Optional 객체가 값을 가지고 있다면 실행, 없다면 넘어감
+        byId.ifPresent(a -> a.getTags().add(tag));
+    }
+
+    public Set<Tag> getTags(Account account) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        // orElseThrows : Optional의 인자가 null일 경우 예외처리
+        return byId.orElseThrow().getTags();
     }
 }
