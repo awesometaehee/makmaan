@@ -43,22 +43,15 @@ public class AccountService implements UserDetailsService {
 
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveNewAccount(signUpForm);
-        newAccount.generateEmailCheckToken();
         // 회원 가입 메일 송신
         sendSignUpConfirmEmail(newAccount);
-
         return newAccount;
     }
 
     private Account saveNewAccount(SignUpForm signUpForm) {
-        Account account = Account.builder()
-                .email(signUpForm.getEmail())
-                .nickname(signUpForm.getNickname())
-                .password(passwordEncoder.encode(signUpForm.getPassword()))
-                .studyCreatedByWeb(true)
-                .studyEnrollmentResultByWeb(true)
-                .studyUpdatedByWeb(true)
-                .build();
+        signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+        Account account = modelMapper.map(signUpForm, Account.class);
+        account.generateEmailCheckToken();
         return accountRepository.save(account);
     }
 
@@ -162,5 +155,10 @@ public class AccountService implements UserDetailsService {
         Optional<Account> byId = accountRepository.findById(account.getId());
         // orElseThrows : Optional의 인자가 null일 경우 예외처리
         return byId.orElseThrow().getTags();
+    }
+
+    public void removeTag(Account account, Tag tag) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> a.getTags().remove(tag));
     }
 }

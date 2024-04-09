@@ -1,5 +1,7 @@
 package com.studymaan.settings;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studymaan.account.AccountService;
 import com.studymaan.account.CurrentUser;
 import com.studymaan.domain.Account;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +36,7 @@ public class SettingsController {
     private final ModelMapper modelMapper;
     private final NicknameFormValidator nicknameFormValidator;
     private final TagRepository tagRepository;
+    private final ObjectMapper objectMapper;
 
     public static final String SETTINGS_PROFILE_VIEW_NAME = "settings/profile";
     public static final String SETTINGS_PROFILE_URL = "/settings/profile";
@@ -137,23 +141,37 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_TAGS_URL)
-    public String updateTags(@CurrentUser Account account, Model model) {
+    public String updateTags(@CurrentUser Account account, Model model) throws JsonProcessingException {
         model.addAttribute(account);
         Set<Tag> tags = accountService.getTags(account);
         // tag title을 문자열로 수집(map)해서 콜렉터의 리스트로 변환
         model.addAttribute("tags", tags.stream().map(Tag::getTitle).collect(Collectors.toList()));
+        List<String> allTags = tagRepository.findAll().stream().map(Tag::getTitle).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
         return SETTINGS_TAGS_VIEW_NAME;
     }
 
-    @PostMapping("/settings/tags/add")
+    @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
     public ResponseEntity addTags(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle(); // client에서 받아온 tag title
         Tag tag = tagRepository.findByTitle(title);
         if(tag == null) {
-            tag = tagRepository.save(Tag.builder().title(tagForm.getTagTitle()).build());
+            tag = tagRepository.save(Tag.builder().title(title).build());
         }
         accountService.addTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(SETTINGS_TAGS_URL + "/remove")
+    @ResponseBody
+    public ResponseEntity removeTags(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String title = tagForm.getTagTitle(); // client에서 받아온 tag title
+        Tag tag = tagRepository.findByTitle(title);
+        if(tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }
 }

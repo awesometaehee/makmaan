@@ -1,14 +1,20 @@
 package com.studymaan.settings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studymaan.WithAccount;
 import com.studymaan.account.AccountRepository;
+import com.studymaan.account.AccountService;
 import com.studymaan.domain.Account;
+import com.studymaan.domain.Tag;
+import com.studymaan.settings.form.TagForm;
+import com.studymaan.tag.TagRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +33,12 @@ public class SettingsControllerTest {
     @Autowired AccountRepository accountRepository;
 
     @Autowired PasswordEncoder passwordEncoder;
+
+    @Autowired ObjectMapper objectMapper;
+
+    @Autowired TagRepository tagRepository;
+
+    @Autowired AccountService accountService;
 
     @AfterEach
     void afterEach() {
@@ -115,5 +127,57 @@ public class SettingsControllerTest {
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeExists("passwordForm"))
                 .andExpect(model().attributeExists("account"));
+    }
+
+    @WithAccount("makmaan")
+    @DisplayName("계정의 태그 수정 폼")
+    @Test
+    void updateTagsForm() throws Exception {
+        mockMvc.perform(get(SettingsController.SETTINGS_TAGS_URL))
+                .andExpect(view().name(SettingsController.SETTINGS_TAGS_VIEW_NAME))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("whitelist"))
+                .andExpect(model().attributeExists("tags"));
+    }
+
+    @WithAccount("makmaan")
+    @DisplayName("계정에 태그 추가")
+    @Test
+    void addTag() throws Exception {
+        TagForm tagForm = new TagForm();
+        tagForm.setTagTitle("newTag");
+
+        mockMvc.perform(post(SettingsController.SETTINGS_TAGS_URL + "/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tagForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        Tag newTag = tagRepository.findByTitle("newTag");
+        assertNotNull(newTag);
+        Account keesun = accountRepository.findByNickname("makmaan");
+        assertTrue(keesun.getTags().contains(newTag));
+    }
+
+    @WithAccount("makmaan")
+    @DisplayName("계정에 태그 삭제")
+    @Test
+    void removeTag() throws Exception {
+        Account keesun = accountRepository.findByNickname("makmaan");
+        Tag newTag = tagRepository.save(Tag.builder().title("newTag").build());
+        accountService.addTag(keesun, newTag);
+
+        assertTrue(keesun.getTags().contains(newTag));
+
+        TagForm tagForm = new TagForm();
+        tagForm.setTagTitle("newTag");
+
+        mockMvc.perform(post(SettingsController.SETTINGS_TAGS_URL + "/remove")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tagForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        assertFalse(keesun.getTags().contains(newTag));
     }
 }
