@@ -1,7 +1,10 @@
 package com.studymaan.account;
 
+import com.studymaan.config.AppProperties;
 import com.studymaan.domain.Tag;
 import com.studymaan.domain.Zone;
+import com.studymaan.mail.EmailMessage;
+import com.studymaan.mail.EmailService;
 import com.studymaan.settings.form.NicknameForm;
 import com.studymaan.settings.form.Notifications;
 import com.studymaan.settings.form.Profile;
@@ -23,6 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IContext;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -34,8 +40,10 @@ import java.util.Set;
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
-    private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final TemplateEngine templateEngine;
+    private final AppProperties appProperties;
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy;
     private final SecurityContextRepository securityContextRepository;
@@ -57,13 +65,22 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendSignUpConfirmEmail(Account newAccount) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(newAccount.getEmail());
-        mailMessage.setSubject("스터디올레 회원 가입 인증");
-        mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken() +
+        Context context = new Context();
+        context.setVariable("link", "/check-email-token?token=" + newAccount.getEmailCheckToken() +
                 "&email=" + newAccount.getEmail());
+        context.setVariable("nickName", newAccount.getNickname());
+        context.setVariable("linkName", "이메일 인증하기");
+        context.setVariable("message", "스터디올래 서비스를 이용하려면 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
 
-        javaMailSender.send(mailMessage);
+        String message = templateEngine.process("/mail/simple-link", context);
+
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(newAccount.getEmail())
+                .subject("스터디올레 회원 가입 인증")
+                .message(message)
+                .build();
+        emailService.sendEmail(emailMessage);
     }
 
     public void login(Account account, HttpServletRequest request, HttpServletResponse response) {
@@ -135,14 +152,23 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendLoginLink(Account account) {
-        account.generateEmailCheckToken();
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(account.getEmail());
-        mailMessage.setSubject("스터디올래, 로그인 링크");
-        mailMessage.setText("/login-by-email?token=" + account.getEmailCheckToken() +
+        Context context = new Context();
+        context.setVariable("link", "/login-by-email?token=" + account.getEmailCheckToken() +
                 "&email=" + account.getEmail());
+        context.setVariable("nickName", account.getNickname());
+        context.setVariable("linkName", "이메일로 로그인하기");
+        context.setVariable("message", "스터디올래 로그인하려면 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
 
-        javaMailSender.send(mailMessage);
+        String message = templateEngine.process("/mail/simple-link", context);
+
+        account.generateEmailCheckToken();
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(account.getEmail())
+                .subject("스터디올래, 로그인 링크")
+                .message(message)
+                .build();
+        emailService.sendEmail(emailMessage);
     }
 
     public void addTag(Account account, Tag tag) {
