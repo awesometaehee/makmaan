@@ -18,8 +18,13 @@ public class Zone {
     private String city;
 
     @Column(nullable = false)
-    private String localNameCity;
+    private String localNameOfCity;
 
     @Column(nullable = true)
     private String province; // ex) 경기도, 강원도 ...
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)/%s", city, localNameOfCity, province);
+    }
 }
