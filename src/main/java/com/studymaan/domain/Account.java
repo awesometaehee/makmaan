@@ -9,8 +9,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter @EqualsAndHashCode(of = "id")
-@Builder @AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
+@EqualsAndHashCode(of = "id") // 연관 관계가 복잡해질 시 서로 다른 연관 관계가 무한로프 방지를 방지하기 위해 보통 id 값만 주로 사용
+@Builder // 빌더 패턴 생성
+@AllArgsConstructor // 모든 필드 값을 파라미터로 받는 생성자 생성
+@NoArgsConstructor // 파라미터가 없는 기본 생성자 생성
 public class Account {
 
     @Id @GeneratedValue
@@ -77,5 +80,9 @@ public class Account {
     public boolean canSendConfirmEmail() {
         // 현 시간 부로 힌시간 전 time return
         return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
+    }
+
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
     }
 }
