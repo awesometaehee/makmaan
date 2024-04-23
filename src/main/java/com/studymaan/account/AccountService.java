@@ -142,7 +142,8 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-    public void updateAccount(Account account, NicknameForm nicknameForm, HttpServletRequest request, HttpServletResponse response) {
+    public void updateAccount(Account account, NicknameForm nicknameForm,
+                              HttpServletRequest request, HttpServletResponse response) {
         account.setNickname(nicknameForm.getNickname());
         accountRepository.save(account);
         login(account, request, response);
