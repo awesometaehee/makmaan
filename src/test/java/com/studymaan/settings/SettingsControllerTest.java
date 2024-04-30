@@ -7,7 +7,7 @@ import com.studymaan.account.AccountService;
 import com.studymaan.domain.Account;
 import com.studymaan.domain.Tag;
 import com.studymaan.domain.Zone;
-import com.studymaan.settings.form.TagForm;
+import com.studymaan.tag.TagForm;
 import com.studymaan.settings.form.ZoneForm;
 import com.studymaan.tag.TagRepository;
 import com.studymaan.zone.ZoneRepository;

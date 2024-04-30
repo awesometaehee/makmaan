@@ -10,7 +10,9 @@ import com.studymaan.domain.Zone;
 import com.studymaan.settings.form.*;
 import com.studymaan.settings.validator.NicknameFormValidator;
 import com.studymaan.settings.validator.PasswordFormValidator;
+import com.studymaan.tag.TagForm;
 import com.studymaan.tag.TagRepository;
+import com.studymaan.tag.TagService;
 import com.studymaan.zone.ZoneRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,6 +42,7 @@ public class SettingsController {
     private final AccountService accountService;
     private final ModelMapper modelMapper;
     private final NicknameFormValidator nicknameFormValidator;
+    private final TagService tagService;
     private final TagRepository tagRepository;
     private final ObjectMapper objectMapper;
     private final ZoneRepository zoneRepository;
@@ -158,10 +161,7 @@ public class SettingsController {
     @ResponseBody
     public ResponseEntity addTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle(); // client에서 받아온 tag title
-        Tag tag = tagRepository.findByTitle(title);
-        if(tag == null) {
-            tag = tagRepository.save(Tag.builder().title(title).build());
-        }
+        Tag tag = tagService.findOrCreateNew(title);
         accountService.addTag(account, tag);
         return ResponseEntity.ok().build();
     }
@@ -170,10 +170,7 @@ public class SettingsController {
     @ResponseBody
     public ResponseEntity removeTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle(); // client에서 받아온 tag title
-        Tag tag = tagRepository.findByTitle(title);
-        if(tag == null) {
-            return ResponseEntity.badRequest().build();
-        }
+        Tag tag = tagService.findOrCreateNew(title);
         accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }

@@ -1,4 +1,4 @@
-package com.studymaan.settings.form;
+package com.studymaan.tag;
 
 import lombok.Data;
 
