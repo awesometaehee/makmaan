@@ -1,9 +1,6 @@
 package com.studymaan.study;
 
-import com.studymaan.domain.Account;
-import com.studymaan.domain.Study;
-import com.studymaan.domain.Tag;
-import com.studymaan.domain.Zone;
+import com.studymaan.domain.*;
 import com.studymaan.study.form.StudyDescriptionForm;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -11,6 +8,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import static com.studymaan.study.form.StudyForm.VALID_PATH_PATTERN;
 
@@ -146,5 +145,13 @@ public class StudyService {
         } else {
             throw new IllegalArgumentException("스터디를 삭제할 수 없습니다.");
         }
+    }
+
+    public void addMember(Study study, Account account) {
+        study.getMembers().add(account);
+    }
+
+    public void removeMember(Study study, Account account) {
+        study.getMembers().remove(account);
     }
 }
