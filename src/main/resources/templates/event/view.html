@@ -16,19 +16,19 @@
                 <span class="h2" th:text="${event.title}"></span>
             </div>
             <div class="col-4 text-right justify-content-end">
-                    <span sec:authorize="isAuthenticated()">
-                        <button th:if="${event.isEnrollableFor(#authentication.principal)}"
-                                class="btn btn-outline-primary" data-toggle="modal" data-target="#enroll">
-                            <i class="fa fa-plus-circle"></i> 참가 신청
-                        </button>
-                        <button th:if="${event.isDisenrollableFor(#authentication.principal)}"
-                                class="btn btn-outline-primary" data-toggle="modal" data-target="#disenroll">
-                            <i class="fa fa-minus-circle"></i> 참가 신청 취소
-                        </button>
-                        <span class="text-success" th:if="${event.isAttended(#authentication.principal)}" disabled>
-                            <i class="fa fa-check-circle"></i> 참석 완료
-                        </span>
+                <span sec:authorize="isAuthenticated()">
+                    <button th:if="${event.isEnrollableFor(#authentication.principal)}"
+                            class="btn btn-outline-primary" data-toggle="modal" data-target="#enroll">
+                        <i class="fa fa-plus-circle"></i> 참가 신청
+                    </button>
+                    <button th:if="${event.isDisenrollableFor(#authentication.principal)}"
+                            class="btn btn-outline-primary" data-toggle="modal" data-target="#disenroll">
+                        <i class="fa fa-minus-circle"></i> 참가 신청 취소
+                    </button>
+                    <span class="text-success" th:if="${event.isAttended(#authentication.principal)}" disabled>
+                        <i class="fa fa-check-circle"></i> 참석 완료
                     </span>
+                </span>
             </div>
             <div class="modal fade" id="disenroll" tabindex="-1" role="dialog" aria-labelledby="leaveTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -46,7 +46,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/leave'}" method="post">
+                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/disenroll'}" method="post">
                                 <button class="btn btn-primary" type="submit" aria-describedby="submitHelp">확인</button>
                             </form>
                         </div>
@@ -86,52 +86,52 @@
                 <dd>
                     <table class="table table-borderless table-sm" th:if="${event.enrollments.size() > 0}">
                         <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">참석자</th>
-                            <th scope="col">참가 신청 일시</th>
-                            <th scope="col">참가 상태</th>
-                            <th th:if="${study.isManager(#authentication.principal)}" scope="col">
-                                참가 신청 관리
-                            </th>
-                            <th th:if="${study.isManager(#authentication.principal)}" scope="col">
-                                출석 체크
-                            </th>
-                        </tr>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">참석자</th>
+                                <th scope="col">참가 신청 일시</th>
+                                <th scope="col">참가 상태</th>
+                                <th th:if="${study.isManager(#authentication.principal)}" scope="col">
+                                    참가 신청 관리
+                                </th>
+                                <th th:if="${study.isManager(#authentication.principal)}" scope="col">
+                                    출석 체크
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="enroll: ${event.enrollments}">
-                            <th scope="row" th:text="${enrollStat.count}"></th>
-                            <td>
-                                <a th:href="@{'/profile/' + ${enroll.account.nickname}}"
-                                   class="text-decoration-none">
-                                    <svg th:if="${#strings.isEmpty(enroll.account?.profileImage)}" data-jdenticon-value="nickname"
-                                         th:data-jdenticon-value="${enroll.account.nickname}" width="24" height="24" class="rounded border bg-light"></svg>
-                                    <img th:if="${!#strings.isEmpty(enroll.account?.profileImage)}"
-                                         th:src="${enroll.account?.profileImage}" width="24" height="24" class="rounded border"/>
-                                    <span th:text="${enroll.account.nickname}"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <span class="date-time" th:text="${enroll.enrolledAt}"></span>
-                            </td>
-                            <td>
-                                <span th:if="${enroll.accepted}">확정</span>
-                                <span th:if="${!enroll.accepted}">대기중</span>
-                            </td>
-                            <td th:if="${study.isManager(#authentication.principal)}">
-                                <a th:if="${event.isAcceptable(enroll)}" href="#" class="text-decoration-none"
-                                   th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/accept'}" >신청 수락</a>
-                                <a th:if="${event.isRejectable(enroll)}" href="#" class="text-decoration-none"
-                                   th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/reject'}">취소</a>
-                            </td>
-                            <td th:if="${study.isManager(#authentication.principal)}">
-                                <a th:if="${enroll.accepted && !enroll.attended}" href="#" class="text-decoration-none"
-                                   th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/checkin'}">체크인</a>
-                                <a th:if="${enroll.accepted && enroll.attended}" href="#" class="text-decoration-none"
-                                   th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/cancel-checkin'}">체크인 취소</a>
-                            </td>
-                        </tr>
+                            <tr th:each="enroll: ${event.enrollments}">
+                                <th scope="row" th:text="${enrollStat.count}"></th>
+                                <td>
+                                    <a th:href="@{'/profile/' + ${enroll.account.nickname}}"
+                                       class="text-decoration-none">
+                                        <svg th:if="${#strings.isEmpty(enroll.account?.profileImage)}" data-jdenticon-value="nickname"
+                                             th:data-jdenticon-value="${enroll.account.nickname}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        <img th:if="${!#strings.isEmpty(enroll.account?.profileImage)}"
+                                             th:src="${enroll.account?.profileImage}" width="24" height="24" class="rounded border"/>
+                                        <span th:text="${enroll.account.nickname}"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="date-time" th:text="${enroll.enrolledAt}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${enroll.accepted}">확정</span>
+                                    <span th:if="${!enroll.accepted}">대기중</span>
+                                </td>
+                                <td th:if="${study.isManager(#authentication.principal)}">
+                                    <a th:if="${event.canAccept(enroll)}" href="#" class="text-decoration-none"
+                                       th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/accept'}" >신청 수락</a>
+                                    <a th:if="${event.canReject(enroll)}" href="#" class="text-decoration-none"
+                                       th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/reject'}">취소</a>
+                                </td>
+                                <td th:if="${study.isManager(#authentication.principal)}">
+                                    <a th:if="${enroll.accepted && !enroll.attended}" href="#" class="text-decoration-none"
+                                       th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/checkin'}">체크인</a>
+                                    <a th:if="${enroll.accepted && enroll.attended}" href="#" class="text-decoration-none"
+                                       th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/cancel-checkin'}">체크인 취소</a>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </dd>
@@ -165,12 +165,12 @@
 
                 <dt class="font-weight-light">모임장</dt>
                 <dd>
-                    <a th:href="@{'/profile/' + ${event.createdBy.nickname}}" class="text-decoration-none">
+                    <a th:href="@{'/profile/' + ${event.createdBy?.nickname}}" class="text-decoration-none">
                         <svg th:if="${#strings.isEmpty(event.createdBy?.profileImage)}"
-                             th:data-jdenticon-value="${event.createdBy.nickname}" width="24" height="24" class="rounded border bg-light"></svg>
+                             th:data-jdenticon-value="${event.createdBy?.nickname}" width="24" height="24" class="rounded border bg-light"></svg>
                         <img th:if="${!#strings.isEmpty(event.createdBy?.profileImage)}"
                              th:src="${event.createdBy?.profileImage}" width="24" height="24" class="rounded border"/>
-                        <span th:text="${event.createdBy.nickname}"></span>
+                        <span th:text="${event.createdBy?.nickname}"></span>
                     </a>
                 </dd>
 
@@ -201,7 +201,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id}}" th:method="delete">
+                            <form th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/delete'}" method="post">
                                 <button class="btn btn-primary" type="submit" aria-describedby="submitHelp">확인</button>
                             </form>
                         </div>
@@ -211,6 +211,6 @@
         </div>
         <div th:replace="fragments.html :: footer"></div>
     </div>
-    <div th:replace="fragments.html :: date-time"></div>
+    <script th:replace="fragments.html :: date-time"></script>
 </body>
 </html>
