@@ -15,7 +15,7 @@
                     </a> / </span>
                 <span class="h2" th:text="${event.title}"></span>
             </div>
-            <div class="col-4 text-right justify-content-end">
+            <div class="col-4 text-right justify-content-end d-flex align-items-center">
                 <span sec:authorize="isAuthenticated()">
                     <button th:if="${event.isEnrollableFor(#authentication.principal)}"
                             class="btn btn-outline-primary" data-toggle="modal" data-target="#enroll">
