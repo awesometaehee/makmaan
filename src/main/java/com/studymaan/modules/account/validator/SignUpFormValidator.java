@@ -1,5 +1,7 @@
-package com.studymaan.modules.account;
+package com.studymaan.modules.account.validator;
 
+import com.studymaan.modules.account.AccountRepository;
+import com.studymaan.modules.account.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

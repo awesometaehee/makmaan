@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import javax.sql.DataSource;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity // security 직접 설정하겠다는 선언
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -53,6 +53,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // 스프링 시큐리티 설정 : 보다 안전한 영속화 기반 설정
     @Bean
     public PersistentTokenRepository tokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();

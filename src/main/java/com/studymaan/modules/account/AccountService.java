@@ -2,6 +2,7 @@ package com.studymaan.modules.account;
 
 import com.studymaan.infra.config.AppProperties;
 import com.studymaan.modules.account.form.Profile;
+import com.studymaan.modules.account.form.SignUpForm;
 import com.studymaan.modules.tag.Tag;
 import com.studymaan.modules.zone.Zone;
 import com.studymaan.infra.mail.EmailMessage;
@@ -90,7 +91,7 @@ public class AccountService implements UserDetailsService {
         securityContextRepository.saveContext(context, request, response);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // 로그인 시 체크하기 위해 데이터를 읽어오기 때문에 readOnly
     @Override
     public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(emailOrNickname);
@@ -159,7 +160,6 @@ public class AccountService implements UserDetailsService {
 
         String message = templateEngine.process("/mail/simple-link", context);
 
-        account.generateEmailCheckToken();
         EmailMessage emailMessage = EmailMessage.builder()
                 .to(account.getEmail())
                 .subject("스터디올래, 로그인 링크")

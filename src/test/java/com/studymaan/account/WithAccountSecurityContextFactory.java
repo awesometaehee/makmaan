@@ -1,7 +1,7 @@
 package com.studymaan.account;
 
 import com.studymaan.modules.account.AccountService;
-import com.studymaan.modules.account.SignUpForm;
+import com.studymaan.modules.account.form.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

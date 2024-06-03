@@ -40,6 +40,51 @@
         .popover {
             font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
+
+        table th {
+            font-weight: lighter;
+        }
+
+        mark {
+            padding: 0;
+            background: transparent;
+            background: linear-gradient(to right, #f0ad4e 50%, transparent 50%);
+            background-position: right bottom;
+            background-size: 200% 100%;
+            transition: all .5s ease;
+            color: #fff;
+        }
+
+        mark.animate {
+            background-position: left bottom;
+            color: #000;
+        }
+
+        .jumbotron {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            margin-bottom: 0;
+            background-color: #fff;
+        }
+
+        @media (min-width: 768px) {
+            .jumbotron {
+                padding-top: 6rem;
+                padding-bottom: 6rem;
+            }
+        }
+
+        .jumbotron p:last-child {
+            margin-bottom: 0;
+        }
+
+        .jumbotron h1 {
+            font-weight: 300;
+        }
+
+        .jumbotron .container {
+            max-width: 40rem;
+        }
     </style>
 </head>
 
@@ -525,5 +570,40 @@
         <p th:text="${noti.message}" class="text-left mb-0 mt-1">message</p>
     </a>
 </ul>
+
+<div th:fragment="study-list (studyList)" class="col-sm-12">
+    <div class="row">
+        <div class="col-md-4" th:each="study : ${studyList}">
+            <div class="card mb-4 shadow-sm">
+                <img class="context card-img-top" th:alt="${study.title}"  th:src="${study.image}"/>
+                <div class="card-body">
+                    <a th:href="@{'/study/' + ${study.path}}" class="text-decoration-none">
+                        <h5 th:text="${study.title}" class="card-title context"></h5>
+                    </a>
+                    <p th:text="${study.shortDescription}" class="card-text">Short description</p>
+                    <p class="card-text context">
+                                <span th:each="tag: ${study.tags}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span>
+                        <span th:each="zone : ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+                                    </a>
+                                </span>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fa fa-user-circle"></i>
+                            <span th:text="${study.memberCount}"></span>명
+                        </small>
+                        <small th:text="${study.publishedDateTime}" class="text-muted date">9 mins</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </html>

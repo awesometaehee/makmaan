@@ -13,24 +13,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@NamedEntityGraph(name = "Study.withAll", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("zones"),
-        @NamedAttributeNode("managers"),
-        @NamedAttributeNode("members")})
-@NamedEntityGraph(name = "Study.withTagsAndManagers", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withZonesAndManagers", attributeNodes = {
-        @NamedAttributeNode("zones"),
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withManagers", attributeNodes = {
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withMembers", attributeNodes = {
-        @NamedAttributeNode("members")})
-@NamedEntityGraph(name = "Study.withTagsAndZones", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("zones")})
 @Entity
 @Setter @Getter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor @NoArgsConstructor
@@ -77,6 +59,8 @@ public class Study {
     private boolean closed; // 종료 여부
 
     private boolean useBanner; // 배너 사용 여부
+
+    private int memberCount;
 
     public void addManager(Account account) {
         this.managers.add(account);
@@ -151,5 +135,15 @@ public class Study {
 
     public boolean isManagedBy(Account account) {
         return this.getManagers().contains(account);
+    }
+
+    public void addMember(Account account) {
+        this.getMembers().add(account);
+        this.memberCount++;
+    }
+
+    public void removeMember(Account account) {
+        this.getMembers().remove(account);
+        this.memberCount--;
     }
 }

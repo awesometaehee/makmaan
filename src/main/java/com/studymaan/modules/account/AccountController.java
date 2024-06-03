@@ -1,5 +1,7 @@
 package com.studymaan.modules.account;
 
+import com.studymaan.modules.account.form.SignUpForm;
+import com.studymaan.modules.account.validator.SignUpFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +50,12 @@ public class AccountController {
         Account account = accountRepository.findByEmail(email);
         String view = "account/checked-email";
         if(account == null) {
-            model.addAttribute("error", "wrong email");
+            model.addAttribute("error", "wrong.email");
             return view;
         }
 
         if(!account.isValidToken(token)) {
-            model.addAttribute("error", "wrong token");
+            model.addAttribute("error", "wrong.token");
             return view;
         }
 

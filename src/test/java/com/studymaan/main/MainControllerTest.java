@@ -2,7 +2,7 @@ package com.studymaan.main;
 
 import com.studymaan.modules.account.AccountRepository;
 import com.studymaan.modules.account.AccountService;
-import com.studymaan.modules.account.SignUpForm;
+import com.studymaan.modules.account.form.SignUpForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

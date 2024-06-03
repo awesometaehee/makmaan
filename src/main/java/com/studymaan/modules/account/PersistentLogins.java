@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+// RememberMe에 필요한 Entity 생성
 @Table(name = "persistent_logins")
 @Entity
 @Getter

@@ -1,16 +1,20 @@
 package com.studymaan.modules.event;
 
 import com.studymaan.modules.account.Account;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@NamedEntityGraph(
+        name = "Enrollment.withEventAndStudy",
+        attributeNodes = {
+                @NamedAttributeNode(value = "event", subgraph = "study")
+        },
+        subgraphs = @NamedSubgraph(name = "study", attributeNodes = @NamedAttributeNode("study"))
+)
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
 public class Enrollment {

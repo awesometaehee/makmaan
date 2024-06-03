@@ -93,7 +93,8 @@ public class SettingsController {
     }
 
     @PostMapping(PASSWORD)
-    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm,
+                                 Errors errors, Model model, RedirectAttributes attributes) {
         if(errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS + PASSWORD;
@@ -112,7 +113,8 @@ public class SettingsController {
     }
 
     @PostMapping(NOTIFICATIONS)
-    public String updateNotifications(@CurrentAccount Account account, @Valid Notifications notifications, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updateNotifications(@CurrentAccount Account account, @Valid Notifications notifications,
+                                      Errors errors, Model model, RedirectAttributes attributes) {
         if(errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS + NOTIFICATIONS;
@@ -131,7 +133,8 @@ public class SettingsController {
     }
 
     @PostMapping(ACCOUNT)
-    public String updateAccount(@CurrentAccount Account account, @Valid NicknameForm nicknameForm, Model model, Errors errors, RedirectAttributes attributes
+    public String updateAccount(@CurrentAccount Account account, @Valid NicknameForm nicknameForm
+                                , Errors errors, Model model, RedirectAttributes attributes
                                 , HttpServletRequest request, HttpServletResponse response) {
         if(errors.hasErrors()) {
             model.addAttribute(account);

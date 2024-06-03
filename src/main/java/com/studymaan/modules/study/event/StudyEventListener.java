@@ -21,6 +21,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Async
@@ -43,27 +45,47 @@ public class StudyEventListener {
         accounts.forEach(account -> {
             if(account.isStudyCreatedByEmail()) {
                 // 이메일 전송
-                sendStudyCreatedEmail(account, study);
+                sendStudyCreatedEmail(account, study, "새로운 스터디가 생겼습니다.",
+                        "스터디올래, '" + study.getTitle() + "' 스터디가 생겼습니다.");
             }
 
             if(account.isStudyCreatedByWeb()) {
                 // 웹 알림
-                saveStudyCreatedNotification(account, study);
+                createStudyNotification(account, study, NotificationType.STUDY_CREATED);
             }
         });
     }
 
-    private void sendStudyCreatedEmail(Account account, Study study) {
+    @EventListener
+    public void handlerStudyUpdatedEvent(StudyUpdatedEvent studyUpdatedEvent) {
+        Study study = studyRepository.findStudyWithManagersAndMembersById(studyUpdatedEvent.getStudy().getId());
+        Set<Account> accounts = new HashSet<>();
+        accounts.addAll(study.getManagers());
+        accounts.addAll(study.getMembers());
+        accounts.forEach(account -> {
+            if(account.isStudyUpdatedByEmail()) {
+                sendStudyCreatedEmail(account, study, studyUpdatedEvent.getMessage(),
+                        "스터디올래, '" + study.getTitle() + "스터디에 새 소식이 생겼습니다.");
+            }
+
+            if(account.isStudyUpdatedByWeb()) {
+                createStudyNotification(account, study, NotificationType.STUDY_UPDATED);
+            }
+
+        });
+    }
+
+    private void sendStudyCreatedEmail(Account account, Study study, String contextMessage, String emailSubject) {
         Context context = new Context();
         context.setVariable("nickname", account.getNickname());
         context.setVariable("link", "/study/" + study.getStudyPath(study.getPath()));
         context.setVariable("linkName", study.getTitle());
-        context.setVariable("message", "새로운 스터디가 생겼습니다");
+        context.setVariable("message", contextMessage);
         context.setVariable("host", appProperties.getHost());
         String message = templateEngine.process("mail/simple-link", context);
 
         EmailMessage emailMessage = EmailMessage.builder()
-                .subject("스터디올래, '" + study.getTitle() + "' 스터디가 생겼습니다.")
+                .subject(emailSubject)
                 .to(account.getEmail())
                 .message(message)
                 .build();
@@ -71,7 +93,7 @@ public class StudyEventListener {
         emailService.sendEmail(emailMessage);
     }
 
-    private void saveStudyCreatedNotification(Account account, Study study) {
+    private void createStudyNotification(Account account, Study study, NotificationType notificationType) {
         Notification notification = new Notification();
         notification.setTitle(study.getTitle());
         notification.setLink("/study/" + study.getStudyPath(study.getPath()));
@@ -79,7 +101,7 @@ public class StudyEventListener {
         notification.setCreatedDateTime(LocalDateTime.now());
         notification.setMessage(study.getShortDescription());
         notification.setAccount(account);
-        notification.setNotificationType(NotificationType.STUDY_CREATED);
+        notification.setNotificationType(notificationType);
         notificationRepository.save(notification);
     }
 }

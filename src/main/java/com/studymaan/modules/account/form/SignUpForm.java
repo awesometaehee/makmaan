@@ -1,4 +1,4 @@
-package com.studymaan.modules.account;
+package com.studymaan.modules.account.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

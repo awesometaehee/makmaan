@@ -1,16 +1,22 @@
 package com.studymaan.modules.study;
 
+import com.studymaan.modules.account.CurrentAccount;
 import com.studymaan.modules.study.event.StudyCreatedEvent;
 import com.studymaan.modules.account.Account;
+import com.studymaan.modules.study.event.StudyUpdatedEvent;
 import com.studymaan.modules.tag.Tag;
+import com.studymaan.modules.tag.TagRepository;
 import com.studymaan.modules.zone.Zone;
 import com.studymaan.modules.study.form.StudyDescriptionForm;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 
 import static com.studymaan.modules.study.form.StudyForm.VALID_PATH_PATTERN;
 
@@ -55,6 +61,7 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) {
         modelMapper.map(studyDescriptionForm, study);
+        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 소개를 수정헀습니다."));
     }
 
     public void updateStudyImage(Study study, String image) {
@@ -113,14 +120,17 @@ public class StudyService {
 
     public void close(Study study) {
         study.close();
+        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디를 종료되었습니다."));
     }
 
     public void startRecruit(Study study) {
         study.startRecruit();
+        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 모임이 시작되었습니다."));
     }
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
+        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 모임이 중단되었습니다."));
     }
 
     public boolean isValidPath(String newPath) {
@@ -151,11 +161,11 @@ public class StudyService {
     }
 
     public void addMember(Study study, Account account) {
-        study.getMembers().add(account);
+        study.addMember(account);
     }
 
     public void removeMember(Study study, Account account) {
-        study.getMembers().remove(account);
+        study.removeMember(account);
     }
 
     public Study getStudyToEnroll(String path) {
