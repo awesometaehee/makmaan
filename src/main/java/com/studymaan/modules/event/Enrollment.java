@@ -22,7 +22,7 @@ public class Enrollment {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
     @ManyToOne

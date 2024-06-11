@@ -58,12 +58,12 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-    public boolean isEnrollableFor(UserAccount userAccount) {
-        return isNotClosed() && !isAttended(userAccount) && !isAlreadyEnrolled(userAccount);
+    public boolean isEnrollableFor(UserAccount userAccount, Study study) {
+        return isNotClosed() && !isAttended(userAccount) && !isAlreadyEnrolled(userAccount) && study.isMember(userAccount);
     }
 
-    public boolean isDisenrollableFor(UserAccount userAccount) {
-        return isNotClosed() && !isAttended(userAccount) && isAlreadyEnrolled(userAccount);
+    public boolean isDisenrollableFor(UserAccount userAccount, Study study) {
+        return isNotClosed() && !isAttended(userAccount) && isAlreadyEnrolled(userAccount) && study.isMember(userAccount);
     }
 
     private boolean isNotClosed() {

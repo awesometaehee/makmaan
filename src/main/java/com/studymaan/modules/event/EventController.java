@@ -59,6 +59,7 @@ public class EventController {
         }
 
         Event event = eventService.createEvent(modelMapper.map(eventForm, Event.class), study, account);
+        eventService.newEnrollment(event, account);
         return "redirect:/study/" + study.getStudyPath(path) + "/events/" + event.getId();
     }
 
