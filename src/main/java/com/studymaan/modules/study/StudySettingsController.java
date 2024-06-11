@@ -110,7 +110,7 @@ public class StudySettingsController {
     }
 
     @PostMapping("/tags/add")
-    public ResponseEntity addTag(@CurrentAccount Account account, @PathVariable String path, @RequestBody TagForm tagForm) {
+    public ResponseEntity<Tag> addTag(@CurrentAccount Account account, @PathVariable String path, @RequestBody TagForm tagForm) {
         Study study = studyService.getStudyToUpdateTag(account, path);
         Tag tag = tagService.findOrCreateNew(tagForm.getTagTitle());
         studyService.addTag(study, tag);
@@ -118,7 +118,7 @@ public class StudySettingsController {
     }
 
     @PostMapping("/tags/remove")
-    public ResponseEntity removeTag(@CurrentAccount Account account, @PathVariable String path, @RequestBody TagForm tagForm) {
+    public ResponseEntity<Tag> removeTag(@CurrentAccount Account account, @PathVariable String path, @RequestBody TagForm tagForm) {
         Study study = studyService.getStudyToUpdateTag(account, path);
         Tag tag = tagService.findOrCreateNew(tagForm.getTagTitle());
         studyService.removeTag(study, tag);

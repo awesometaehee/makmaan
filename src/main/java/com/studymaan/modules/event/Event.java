@@ -52,6 +52,7 @@ public class Event {
     private Integer limitOfEnrollments; // 선착순
 
     @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
+    @OrderBy("enrolledAt")
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

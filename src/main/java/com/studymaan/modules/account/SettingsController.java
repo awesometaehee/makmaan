@@ -159,7 +159,7 @@ public class SettingsController {
 
     @PostMapping(TAGS + "/add")
     @ResponseBody
-    public ResponseEntity addTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity<Tag> addTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle(); // client에서 받아온 tag title
         Tag tag = tagService.findOrCreateNew(title);
         accountService.addTag(account, tag);
@@ -168,7 +168,7 @@ public class SettingsController {
 
     @PostMapping(TAGS + "/remove")
     @ResponseBody
-    public ResponseEntity removeTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity<Tag> removeTags(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle(); // client에서 받아온 tag title
         Tag tag = tagService.findOrCreateNew(title);
         accountService.removeTag(account, tag);
@@ -187,7 +187,7 @@ public class SettingsController {
 
     @PostMapping(ZONES + "/add")
     @ResponseBody
-    public ResponseEntity addZones(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
+    public ResponseEntity<Zone> addZones(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
         Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
         if(zone == null) {
             return ResponseEntity.badRequest().build();
@@ -197,7 +197,7 @@ public class SettingsController {
     }
 
     @PostMapping(ZONES + "/remove")
-    public ResponseEntity removeZones(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
+    public ResponseEntity<Zone> removeZones(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
         Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
         if(zone == null) {
             return ResponseEntity.badRequest().build();

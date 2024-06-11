@@ -50,15 +50,15 @@ public class Account {
 
     private boolean studyCreatedByEmail; // 스터디 생성 알람 이메일로 받을 것인지 flag
 
-    private boolean studyCreatedByWeb; // 스터디 생성 알람 웹으로 받을 것인지 flag
+    private boolean studyCreatedByWeb = true; // 스터디 생성 알람 웹으로 받을 것인지 flag
 
     private boolean studyEnrollmentResultByEmail; // 스터디 가입 신청 알람 이메일로 받을 것인지 flag
 
-    private boolean studyEnrollmentResultByWeb; // 스터디 가입 신청 알람 웹으로 받을 것인지 flag
+    private boolean studyEnrollmentResultByWeb = true; // 스터디 가입 신청 알람 웹으로 받을 것인지 flag
 
     private boolean studyUpdatedByEmail; // 스터디 갱신 정보 알람 이메일로 받을 것인지 flag
 
-    private boolean studyUpdatedByWeb; // 스터디 갱신 정보 알람 웹으로 받을 것인지 flag
+    private boolean studyUpdatedByWeb = true; // 스터디 갱신 정보 알람 웹으로 받을 것인지 flag
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();

@@ -17,11 +17,11 @@
             </div>
             <div class="col-4 text-right justify-content-end d-flex align-items-center">
                 <span sec:authorize="isAuthenticated()">
-                    <button th:if="${event.isEnrollableFor(#authentication.principal)}"
+                    <button th:if="${event.isEnrollableFor(#authentication.principal, study)}"
                             class="btn btn-outline-primary" data-toggle="modal" data-target="#enroll">
                         <i class="fa fa-plus-circle"></i> 참가 신청
                     </button>
-                    <button th:if="${event.isDisenrollableFor(#authentication.principal)}"
+                    <button th:if="${event.isDisenrollableFor(#authentication.principal, study)}"
                             class="btn btn-outline-primary" data-toggle="modal" data-target="#disenroll">
                         <i class="fa fa-minus-circle"></i> 참가 신청 취소
                     </button>
@@ -139,8 +139,8 @@
             <dl class="col-3 pt-3 text-right">
                 <dt class="font-weight-light">모집 방법</dt>
                 <dd>
-                    <span th:if="${event.eventType == T(com.studymaan.modules.event.EventType).FCFS}">선착순</span>
-                    <span th:if="${event.eventType == T(com.studymaan.modules.event.EventType).CONFIRMATIVE}">관리자 확인</span>
+                    <span th:if="${event.eventType == eventType[0]}">선착순</span>
+                    <span th:if="${event.eventType == eventType[1]}">관리자 확인</span>
                 </dd>
 
                 <dt class="font-weight-light">모집 인원</dt>

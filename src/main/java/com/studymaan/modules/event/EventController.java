@@ -6,6 +6,8 @@ import com.studymaan.modules.event.validator.EventValidator;
 import com.studymaan.modules.study.Study;
 import com.studymaan.modules.study.StudyService;
 import com.studymaan.modules.event.form.EventForm;
+import com.studymaan.modules.tag.Tag;
+import com.studymaan.modules.zone.Zone;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -61,8 +65,9 @@ public class EventController {
     @GetMapping("/events/{id}")
     public String getEvent(@CurrentAccount Account account, @PathVariable String path, @PathVariable Long id, Model model) {
         model.addAttribute(account);
-        model.addAttribute(eventRepository.findById(id).orElseThrow());
-        model.addAttribute(studyService.getStudy(path));
+        model.addAttribute("event", eventRepository.findById(id).orElseThrow());
+        model.addAttribute("study", studyService.getStudy(path));
+        model.addAttribute("eventType", EventType.values());
         return "event/view";
     }
 
@@ -91,10 +96,9 @@ public class EventController {
 
     @GetMapping("/events/{id}/edit")
     public String updateEventForm(@CurrentAccount Account account, @PathVariable String path, @PathVariable Long id, Model model) {
-        Study study = studyService.getStudyToUpdate(account, path);
         Event event = eventRepository.findById(id).orElseThrow();
         model.addAttribute(account);
-        model.addAttribute(study);
+        model.addAttribute("study", studyService.getStudyToUpdate(account, path));
         model.addAttribute(event);
         model.addAttribute(modelMapper.map(event, EventForm.class));
 
