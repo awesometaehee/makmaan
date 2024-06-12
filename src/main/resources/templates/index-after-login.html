@@ -69,7 +69,7 @@
                 <h5 class="font-weight-light mt-3" th:if="${!#lists.isEmpty(studyMemberOf)}">참여중인 스터디</h5>
                 <div class="list-group" th:if="${!#lists.isEmpty(studyMemberOf)}">
                     <a href="#" th:href="@{'/study/' + ${study.path}}" th:text="${study.title}"
-                       class="list-group-item list-group-item-action" th:each="study: ${studyManagerOf}">
+                       class="list-group-item list-group-item-action" th:each="study: ${studyMemberOf}">
                         Study title
                     </a>
                 </div>

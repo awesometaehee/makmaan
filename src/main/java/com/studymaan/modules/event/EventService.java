@@ -56,7 +56,7 @@ public class EventService {
 
     public void cancelEnrollment(Event event, Account account) {
         Enrollment enrollment = enrollmentRepository.findByEventAndAccount(event, account);
-        event.removeEnrollment(enrollment);
+        event.removeEnrollment(enrollment); // 연관관계 끊기
         enrollmentRepository.delete(enrollment);
         event.acceptNextWaitingEnrollment();
     }

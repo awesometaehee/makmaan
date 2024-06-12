@@ -51,7 +51,7 @@ public class Event {
     @Column
     private Integer limitOfEnrollments; // 선착순
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("enrolledAt")
     private List<Enrollment> enrollments = new ArrayList<>();
 
@@ -95,10 +95,12 @@ public class Event {
         return this.limitOfEnrollments - (int) this.enrollments.stream().filter(Enrollment::isAccepted).count();
     }
 
+    // 선착순 and 참가 제한 수 > 참가 확정 수
     public boolean isAbleToAcceptWaitingEnrollment() {
         return this.eventType == EventType.FCFS && this.limitOfEnrollments > this.getNumberOfAcceptedEnrollments();
     }
 
+    // 모임 참가 확정 인원 수
     public long getNumberOfAcceptedEnrollments() {
         return this.enrollments.stream().filter(Enrollment::isAccepted).count();
     }
@@ -119,14 +121,15 @@ public class Event {
 
     public void addEnrollment(Enrollment enrollment) {
         this.enrollments.add(enrollment);
-        enrollment.setEvent(this);
+        enrollment.setEvent(this); // event, enrollment 연관관계 맺기 위해 선언
     }
 
     public void removeEnrollment(Enrollment enrollment) {
         this.enrollments.remove(enrollment);
-        enrollment.setEvent(null);
+        enrollment.setEvent(null); // event, enrollment 연관관계 끊기 위해 선언
     }
 
+    // 선착순일 때, 모임 참가 취소 시 첫 번째 대기중인 account 참가 확정
     public void acceptNextWaitingEnrollment() {
         if (this.isAbleToAcceptWaitingEnrollment()) {
             Enrollment enrollmentToAccept = this.getTheFirstWaitingEnrollment();
@@ -136,6 +139,7 @@ public class Event {
         }
     }
 
+    // 선착순일 때,
     public void acceptWaitingList() {
         if (this.isAbleToAcceptWaitingEnrollment()) {
             var waitingList = getWaitingList();
@@ -145,6 +149,7 @@ public class Event {
         }
     }
 
+    // 모임 참가 대기 중인 인원
     private List<Enrollment> getWaitingList() {
         return this.enrollments.stream().filter(enrollment -> !enrollment.isAccepted()).collect(Collectors.toList());
     }

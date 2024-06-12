@@ -59,7 +59,7 @@ public class EventController {
         }
 
         Event event = eventService.createEvent(modelMapper.map(eventForm, Event.class), study, account);
-        eventService.newEnrollment(event, account);
+        eventService.newEnrollment(event, account); // 생성 시 관리자는 기본적으로 모임 참가
         return "redirect:/study/" + study.getStudyPath(path) + "/events/" + event.getId();
     }
 
