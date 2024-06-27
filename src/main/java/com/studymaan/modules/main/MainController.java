@@ -30,9 +30,13 @@ public class MainController {
         if(account != null) {
             Account accountLoaded = accountRepository.findAccountWithTagsAndZonesById(account.getId());
             model.addAttribute(accountLoaded);
+            // 스터디 참석할 모임 목록
             model.addAttribute("enrollmentList", enrollmentRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(accountLoaded, true));
+            // 스터디 목록
             model.addAttribute("studyList", studyRepository.findByAccount(accountLoaded.getTags(), accountLoaded.getZones()));
+            // 관리중인 스터디 목록
             model.addAttribute("studyManagerOf", studyRepository.findFirst5ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
+            // 참여중인 스터디 목록
             model.addAttribute("studyMemberOf", studyRepository.findFirst5ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
             return "index-after-login";
         }
@@ -46,6 +50,7 @@ public class MainController {
         return "login";
     }
 
+    // Spring JPA Pageable -> size, page, sort
     @GetMapping("/search/study")
     public String searchStudy(@PageableDefault(size = 9, sort = "publishedDateTime", direction = Sort.Direction.DESC) Pageable pageable
             , String keyword, Model model) {

@@ -20,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // staticResourceLocation을 List<String>으로 변환해서 인터셉터 제외 추가
         List<String> staticResourcesPath = Arrays.stream(StaticResourceLocation.values())
                 .flatMap(StaticResourceLocation::getPatterns)
                 .collect(Collectors.toList());

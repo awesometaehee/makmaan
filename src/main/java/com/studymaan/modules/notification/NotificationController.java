@@ -24,7 +24,7 @@ public class NotificationController {
         long numberOfChecked = notificationRepository.countByAccountAndChecked(account, true);
         putCategorizedNotifications(model, notifications, numberOfChecked, notifications.size());
         model.addAttribute("isNew", true);
-        notificationService.markAsRead(notifications);
+        notificationService.markAsRead(notifications); // 알림 읽음 처리
         return "notification/list";
     }
 
@@ -44,9 +44,9 @@ public class NotificationController {
     }
 
     private static void putCategorizedNotifications(Model model, List<Notification> notifications, long numberOfChecked, long numberOfNotChecked) {
-        List<Notification> newStudyNotifications = new ArrayList<>();
-        List<Notification> eventEnrollmentNotifications = new ArrayList<>();
-        List<Notification> watchingStudyNotifications = new ArrayList<>();
+        List<Notification> newStudyNotifications = new ArrayList<>(); // 스터디 개설 알림
+        List<Notification> eventEnrollmentNotifications = new ArrayList<>(); // 스터디 모임 참가 알림
+        List<Notification> watchingStudyNotifications = new ArrayList<>(); // 관심있는 스터디 알림
 
         for(var obj : notifications) {
             switch (obj.getNotificationType()) {

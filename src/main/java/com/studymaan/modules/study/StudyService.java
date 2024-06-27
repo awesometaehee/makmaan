@@ -3,7 +3,7 @@ package com.studymaan.modules.study;
 import com.studymaan.modules.account.CurrentAccount;
 import com.studymaan.modules.study.event.StudyCreatedEvent;
 import com.studymaan.modules.account.Account;
-import com.studymaan.modules.study.event.StudyUpdatedEvent;
+import com.studymaan.modules.study.event.StudyUpdateEvent;
 import com.studymaan.modules.tag.Tag;
 import com.studymaan.modules.tag.TagRepository;
 import com.studymaan.modules.zone.Zone;
@@ -28,6 +28,7 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final ModelMapper modelMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TagRepository tagRepository;
 
     public Study createNewStudy(Account account, Study study) {
         Study newStudy = studyRepository.save(study);
@@ -61,7 +62,7 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) {
         modelMapper.map(studyDescriptionForm, study);
-        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 소개를 수정헀습니다."));
+        this.eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디 소개를 수정헀습니다."));
     }
 
     public void updateStudyImage(Study study, String image) {
@@ -120,17 +121,17 @@ public class StudyService {
 
     public void close(Study study) {
         study.close();
-        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디를 종료되었습니다."));
+        this.eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디를 종료되었습니다."));
     }
 
     public void startRecruit(Study study) {
         study.startRecruit();
-        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 모임이 시작되었습니다."));
+        this.eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디 모임이 시작되었습니다."));
     }
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
-        this.eventPublisher.publishEvent(new StudyUpdatedEvent(study, "스터디 모임이 중단되었습니다."));
+        this.eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디 모임이 중단되었습니다."));
     }
 
     public boolean isValidPath(String newPath) {
@@ -172,5 +173,24 @@ public class StudyService {
         Study study = studyRepository.findStudyOnlyByPath(path);
         checkIfExistingStudy(path, study);
         return study;
+    }
+
+    public void putData(Account account) {
+        for(int i=0 ; i<5000 ; i++) {
+            String random = RandomString.make(5);
+            Study study = Study.builder()
+                    .title("테스트 " + random)
+                    .shortDescription("테스트입니다")
+                    .fullDescription("test")
+                    .path(random)
+                    .tags(new HashSet<>())
+                    .zones(new HashSet<>())
+                    .managers(new HashSet<>())
+                    .build();
+            study.publish();
+            Tag tag = tagRepository.findByTitle("JPA");
+            study.getTags().add(tag);
+            studyRepository.save(study);
+        }
     }
 }

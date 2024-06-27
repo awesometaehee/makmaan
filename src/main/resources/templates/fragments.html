@@ -582,16 +582,16 @@
                     </a>
                     <p th:text="${study.shortDescription}" class="card-text">Short description</p>
                     <p class="card-text context">
-                                <span th:each="tag: ${study.tags}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
-                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
-                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
-                                    </a>
-                                </span>
+                        <span th:each="tag: ${study.tags}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+                            <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+                                <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+                            </a>
+                        </span>
                         <span th:each="zone : ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
-                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
-                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
-                                    </a>
-                                </span>
+                            <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+                                <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+                            </a>
+                        </span>
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">

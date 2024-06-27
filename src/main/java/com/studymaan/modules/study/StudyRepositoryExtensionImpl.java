@@ -19,6 +19,7 @@ import java.util.Set;
 
 public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport implements StudyRepositoryExtension {
 
+    // QuerydslRepositorySupport 상속 시 파라미터 받는 생성자 주입 -> 우리는 Study라는 객체를 파라미터로 주입
     public StudyRepositoryExtensionImpl() {
         super(Study.class);
     }
@@ -26,6 +27,8 @@ public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport impl
     @Override
     public Page<Study> findByKeyword(String keyword, Pageable pageable) {
         QStudy study = QStudy.study;
+        // n+1 문제 해결(쿼리 다중 생성 문제) -> leftJoin, fetchjoin, distinct
+        // distinct는 사실상 쓸모 x, Spring JPA에서만 작동함, 실제 쿼리에서는 동작 x
         JPQLQuery<Study> query = from(study).where(study.published.isTrue()
                 .and(study.title.containsIgnoreCase(keyword))
                 .or(study.tags.any().title.containsIgnoreCase(keyword))

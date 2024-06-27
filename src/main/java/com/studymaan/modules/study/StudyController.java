@@ -7,6 +7,7 @@ import com.studymaan.modules.study.form.StudyForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 @Controller
 @RequiredArgsConstructor
@@ -78,5 +80,11 @@ public class StudyController {
         Study study = studyRepository.findStudyWithMembersByPath(path);
         studyService.removeMember(study, account);
         return "redirect:/study/" + study.getStudyPath(path) + "/members";
+    }
+
+    @GetMapping("/study/data")
+    public String putData(@CurrentAccount Account account) {
+        studyService.putData(account);
+        return "redirect:/";
     }
 }

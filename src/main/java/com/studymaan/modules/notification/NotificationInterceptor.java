@@ -21,6 +21,7 @@ public class NotificationInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, ModelAndView modelAndView) {
+        // account 사용자 권한이 있는 유저만 알림
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(modelAndView != null && !isRedirectView(modelAndView) && authentication != null && authentication.getPrincipal() instanceof UserAccount) {
             Account account = ((UserAccount) authentication.getPrincipal()).getAccount();
@@ -29,6 +30,7 @@ public class NotificationInterceptor implements HandlerInterceptor {
         }
     }
 
+    // redirect 는 목적지에 대한 요청 응답 처리할 때 핸들러를 타서 굳이 중복으로 처리할 필요 X
     private boolean isRedirectView(ModelAndView modelAndView) {
         return modelAndView.getViewName().startsWith("redirect:") || modelAndView.getView() instanceof RedirectAttributes;
     }

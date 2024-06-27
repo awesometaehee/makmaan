@@ -40,6 +40,11 @@ public class StudyEventListener {
 
     @EventListener
     public void handlerStudyCreatedEvent(StudyCreatedEvent studyCreatedEvent) {
+        /**
+         * studyCreatedEvent 에서 tags, zones를 가져오지 않은 객체가 들어옴
+         * 첫번째 해결 방법은 tags, zones 등 필요한 정보를 패칭한 상태로 객체(studyCreatedEvent)에 담아준다
+         * 두번째, 이벤트를 처리할 때 조회한다. <- 이 방법으로 선택
+         */
         Study study = studyRepository.findStudyWithTagsAndZonesById(studyCreatedEvent.getStudy().getId());
         Iterable<Account> accounts = accountRepository.findAll(AccountPredicates.findByTagsAndZones(study.getTags(), study.getZones()));
         accounts.forEach(account -> {
@@ -57,14 +62,14 @@ public class StudyEventListener {
     }
 
     @EventListener
-    public void handlerStudyUpdatedEvent(StudyUpdatedEvent studyUpdatedEvent) {
-        Study study = studyRepository.findStudyWithManagersAndMembersById(studyUpdatedEvent.getStudy().getId());
+    public void handlerStudyUpdateEvent(StudyUpdateEvent studyUpdateEvent) {
+        Study study = studyRepository.findStudyWithManagersAndMembersById(studyUpdateEvent.getStudy().getId());
         Set<Account> accounts = new HashSet<>();
         accounts.addAll(study.getManagers());
         accounts.addAll(study.getMembers());
         accounts.forEach(account -> {
             if(account.isStudyUpdatedByEmail()) {
-                sendStudyCreatedEmail(account, study, studyUpdatedEvent.getMessage(),
+                sendStudyCreatedEmail(account, study, studyUpdateEvent.getMessage(),
                         "스터디올래, '" + study.getTitle() + "스터디에 새 소식이 생겼습니다.");
             }
 

@@ -3,11 +3,13 @@ package com.studymaan.modules.event;
 import com.studymaan.modules.account.Account;
 import com.studymaan.modules.event.event.EnrollmentAcceptedEvent;
 import com.studymaan.modules.event.event.EnrollmentRejectedEvent;
+import com.studymaan.modules.event.event.TestUpdateEvent;
 import com.studymaan.modules.study.Study;
 import com.studymaan.modules.event.form.EventForm;
-import com.studymaan.modules.study.event.StudyUpdatedEvent;
+import com.studymaan.modules.study.event.StudyUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +30,20 @@ public class EventService {
         event.setCreatedBy(account);
         event.setCreatedDateTime(LocalDateTime.now());
         event.setStudy(study);
-        eventPublisher.publishEvent(new StudyUpdatedEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임을 만들었습니다.");
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임을 만들었습니다.");
         return eventRepository.save(event);
     }
 
     public void updateEvent(EventForm eventForm, Event event) {
         modelMapper.map(eventForm, event);
         event.acceptWaitingList();
-        eventPublisher.publishEvent(new StudyUpdatedEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임 정보를 수정했으니 확인하세요.");
+        // eventPublisher.publishEvent(new TestUpdateEvent("HI"));
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임 정보를 수정했으니 확인하세요.");
     }
 
     public void deleteEvent(Event event) {
         eventRepository.delete(event);
-        eventPublisher.publishEvent(new StudyUpdatedEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임을 취소했습니다.");
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), "'" + event.getTitle()) + "' 모임을 취소했습니다.");
     }
 
     public void newEnrollment(Event event, Account account) {

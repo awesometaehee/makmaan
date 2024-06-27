@@ -63,8 +63,13 @@
     <div th:replace="fragments.html :: footer"></div>
     <script th:replace="fragments.html :: date-time"></script>
     <script src="/node_modules/mark.js/dist/jquery.mark.min.js"></script>
+    <script th:inline="javascript">
+        const message = /*[[${searchPage}]]*/ 'default';
+        console.log(message);
+    </script>
     <script type="application/javascript">
         $(function() {
+
             const mark = function() {
                 // Read the keyword
                 const keyword = $("#keyword").text();
