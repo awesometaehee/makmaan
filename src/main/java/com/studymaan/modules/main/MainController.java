@@ -55,7 +55,17 @@ public class MainController {
     public String searchStudy(@PageableDefault(size = 9, sort = "publishedDateTime", direction = Sort.Direction.DESC) Pageable pageable
             , String keyword, Model model) {
         Page<Study> searchPage = studyRepository.findByKeyword(keyword, pageable);
+        int currentPage = searchPage.getNumber() + 1; // 현재 페이지
+        int startPage = Math.max(currentPage - 4, 1); // 현재 페이지의 주변에 표시할 시작 페이지 번호
+        int endPage = Math.min(currentPage + 4, searchPage.getTotalPages()); // 현재 페이지의 주변에 표시할 마지막 페이지 번호
+        int firstPage = 0; // 처음
+        int lastPage = searchPage.getTotalPages() - 1; // 끝
         model.addAttribute("searchPage", searchPage);
+        model.addAttribute("current", currentPage);
+        model.addAttribute("start", startPage);
+        model.addAttribute("end", endPage);
+        model.addAttribute("first", firstPage);
+        model.addAttribute("last", lastPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("sortProperty", pageable.getSort().toString().contains("publishedDateTime") ? "publishedDateTime" : "memberCount");
         return "/search";
